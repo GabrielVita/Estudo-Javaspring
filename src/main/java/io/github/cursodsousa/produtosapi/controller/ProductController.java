@@ -2,11 +2,13 @@ package io.github.cursodsousa.produtosapi.controller;
 
 import io.github.cursodsousa.produtosapi.model.Product;
 import io.github.cursodsousa.produtosapi.repository.ProductRepository;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @RestController
@@ -26,5 +28,26 @@ public class ProductController {
         product.setId(id);
         productRepository.save(product);
         return product;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Product> getId(@PathVariable("id") String id) {
+        Product product = productRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Produto com ID " + id + " não foi encontrado."
+                ));
+
+        return ResponseEntity.ok(product);
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Map<String, String>> delete(@PathVariable("id") String id){
+        productRepository.deleteById(id);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Item excluído com sucesso");
+        System.out.println("Item excluído com sucesso");
+
+        return ResponseEntity.ok(response);
+
     }
 }
