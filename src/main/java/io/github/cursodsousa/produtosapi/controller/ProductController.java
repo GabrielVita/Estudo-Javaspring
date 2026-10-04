@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -49,5 +50,21 @@ public class ProductController {
 
         return ResponseEntity.ok(response);
 
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<Map<String, String>> updateId(@PathVariable("id") String id,
+                                                        @RequestBody Product product){
+
+        product.setId(id);
+        productRepository.save(product);
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Item " + product.getName() + " alterado com sucesso");
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/")
+    public List<Product> find(@RequestParam("name") String name ){
+        return productRepository.findByName(name);
     }
 }
